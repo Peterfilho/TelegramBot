@@ -9,9 +9,7 @@ import datetime
 import json
 import requests
 from conf.settings import TELEGRAM_TOKEN
-
-#Token = "719662445:AAHyzcK5zE7pGcJjQfwBMnIlK35e506_TBk"
-#Token = os.environ['BOT_TOKEN']
+from conf.settings import CHAT_ID
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
@@ -19,7 +17,7 @@ bot = telebot.TeleBot(TELEGRAM_TOKEN)
 def info(session):
     #markdown = "*bold text* _italic text_ [text](URL)"
     #bot.send_message(session, markdown, parse_mode: 'Markdown')
-    bot.reply_to(session, u"Olá {}! Bem-vindo ao bot! 🧙‍♂️".format(session.chat.first_name))
+    bot.reply_to(session, u"Olá {}! Bem-vindo ao bot! 🧙‍♂️ e ao grupo".format(session.from_user.first_name))
 
 @bot.message_handler(commands=['t','test'])
 def test(session):
@@ -64,7 +62,9 @@ def bitcoin(session):
     bot.reply_to(session, "📊 Nome: {} \n🔄 Valor em R$: {} \n⏱ Ultima atualização: {}".format(data['name'],data['bid'],data['create_date']))
 
 #wellcome message
-
+@bot.message_handler(content_types = ['new_chat_members'])
+def wellcome_message(session):
+    bot.send_message(CHAT_ID, "Bem vindo {}! \nEu sou o Mandachuva aqui! Se precisar de minha ajuda digite /info 😉".format(session.new_chat_member.first_name))
 
 @bot.message_handler(func=lambda m: True)
 def reply(session):
@@ -98,13 +98,13 @@ def reply(session):
         bot.reply_to(session, "Meu pé na tua mão 🙆‍♂️")
 
     elif re.findall("boa tarde",session.text.lower()):
-        bot.reply_to(session, "Boa tarde pra você também {}!".format(session.chat.first_name))
+        bot.reply_to(session, "Boa tarde pra você também {}!".format(session.from_user.first_name))
 
     elif re.findall("bom dia",session.text.lower()):
-        bot.reply_to(session, "Bom dia pra você também {}!".format(session.chat.first_name))
+        bot.reply_to(session, "Bom dia pra você também {}!".format(session.from_user.first_name))
 
     elif re.findall("boa noite",session.text.lower()):
-        bot.reply_to(session, "Boa noite pra você também {}!".format(session.chat.first_name))
+        bot.reply_to(session, "Boa noite pra você também {}!".format(session.from_user.first_name))
 
     elif re.findall("hoje",session.text.lower()):
         if semana == 5:
