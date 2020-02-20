@@ -5,6 +5,7 @@ import feedparser
 import time
 import re
 from datetime import date
+from telegram import ParseMode
 import datetime
 import json
 import requests
@@ -17,7 +18,8 @@ bot = telebot.TeleBot(TELEGRAM_TOKEN)
 def info(session):
     #markdown = "*bold text* _italic text_ [text](URL)"
     #bot.send_message(session, markdown, parse_mode: 'Markdown')
-    bot.reply_to(session, u"Olá {}! Bem-vindo ao bot! 🧙‍♂️ e ao grupo".format(session.from_user.first_name))
+    bot.send_message(session, text="*bold* Example message", ParseMode='Markdown')
+    #bot.reply_to(session, u"Olá {}! Bem-vindo ao bot! 🧙‍♂️ e ao grupo {}".format(session.from_user.first_name, session.chat.title))
 
 @bot.message_handler(commands=['t','test'])
 def test(session):
@@ -61,6 +63,16 @@ def bitcoin(session):
     data = data['BTC']
     bot.reply_to(session, "📊 Nome: {} \n🔄 Valor em R$: {} \n⏱ Ultima atualização: {}".format(data['name'],data['bid'],data['create_date']))
 
+@bot.message_handler(commands=['joke', 'piada'])
+def dolar(session):
+    url = 'https://us-central1-kivson.cloudfunctions.net/charada-aleatoria'
+    headers = {'accept': 'application/json'}
+    r = requests.post(url, headers=headers)
+    #r = requests.post('https://us-central1-kivson.cloudfunctions.net/charada-aleatoria')
+    #r = requests.get('https://us-central1-kivson.cloudfunctions.net/charada-aleatoria')
+    data = r.json()
+    bot.reply_to(session, "Charada Aleatória: \n \n\n{} \n\nResposta: {}".format(data['pergunta'],data['resposta']))
+
 #wellcome message
 @bot.message_handler(content_types = ['new_chat_members'])
 def wellcome_message(session):
@@ -77,6 +89,7 @@ def reply(session):
         bot.reply_to(session, "https://tenor.com/IAlp.gif")
 
     elif re.findall("^rastrear", session.text.lower()):
+        bot.send_chat_action(CHAT_ID, 'typing')
         if not re.findall(r"...........br", session.text.lower()):
             bot.reply_to(session, "😥 Desculpe! \nSó consigo localizar encomendas do Brasil")
             return
