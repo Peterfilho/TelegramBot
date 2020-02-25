@@ -1,0 +1,10 @@
+DateTime==4.3
+decorator==4.4.1
+feedparser==5.2.1
+numpy==1.18.1
+pyTelegramBotAPI==3.6.7
+python-apt==1.4.1
+python-telegram-bot==12.4.2
+requests==2.22.0
+telegram==0.0.1
+urllib3==1.25.8
