@@ -7,6 +7,7 @@ import re
 from datetime import date
 from datetime import datetime
 from telegram import ParseMode
+from time import sleep
 import datetime
 import json
 import requests
@@ -28,6 +29,17 @@ def info(session):
     "\n \nCriado por: *Peterson Medeiros*"
     .format(session.from_user.first_name, session.chat.title), parse_mode=ParseMode.MARKDOWN)
 
+@bot.message_handler(commands=['comandos','Comandos'])
+def commands(session):
+    bot.send_message(CHAT_ID, "/info - Obtem informações sobre o Bot.\n/9g - Meme aleatório do 9gag.\n/AhNegao - Meme aleatório do Ah Negão.\n"
+    "/3c - Noticias do site da 3c Plus.\n"
+    "/dolar - Cotação atual do Dolar.\n"
+    "/bitcoin - Cotação atual do Bitcoin.\n"
+    "/joke - Charada Aleatória.\n"
+    "\n🔍 *Rastrear uma encomenda*: Escreva rastrear seguido do código de rastreamento. Exemplo: *rastrear PL059497789BR*\n"
+    "\n🌦 *Informações climaticas*: Escreva clima seguido da cidade e sigla do estado. Exemplo *Clima Guarapuava PR*", parse_mode=ParseMode.MARKDOWN)
+    sleep(10)
+
 @bot.message_handler(commands=['t','test'])
 def test(session):
     url = "http://9gagrss.com/feed"
@@ -41,6 +53,7 @@ def blog(session):
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
     bot.reply_to(session, text=(rss_d.entries[0]['link']))
+    sleep(10)
 
 @bot.message_handler(commands=['ahnegao', 'AhNegao'])
 def blog(session):
@@ -48,6 +61,7 @@ def blog(session):
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
     bot.reply_to(session, text=(rss_d.entries[0]['link']))
+    sleep(10)
 
 @bot.message_handler(commands=['blog','3c'])
 def blog(session):
@@ -55,6 +69,7 @@ def blog(session):
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
     bot.reply_to(session, text=(rss_d.entries[0]['link']))
+    sleep(10)
 
 @bot.message_handler(commands=['dolar', 'Dolar'])
 def dolar(session):
@@ -63,6 +78,7 @@ def dolar(session):
     data = data['USD']
     bot.reply_to(session, "💵 Nome: {} \n🔄 Valor em R$: {} \n⏱ Ultima atualização: {}"
     .format(data['name'],data['bid'],data['create_date']))
+    sleep(10)
 
 @bot.message_handler(commands=['bitcoin','Bitcoin'])
 def bitcoin(session):
@@ -71,6 +87,7 @@ def bitcoin(session):
     data = data['BTC']
     bot.reply_to(session, "📊 Nome: {} \n🔄 Valor em R$: {} \n⏱ Ultima atualização: {}"
     .format(data['name'],data['bid'],data['create_date']))
+    sleep(10)
 
 @bot.message_handler(commands=['joke', 'piada'])
 def dolar(session):
@@ -80,11 +97,13 @@ def dolar(session):
     data = r.json()
     bot.reply_to(session, "Charada Aleatória: \n \n\n{} \n\nResposta: {}"
     .format(data['pergunta'],data['resposta']))
+    sleep(10)
 
 @bot.message_handler(content_types = ['new_chat_members'])
 def wellcome_message(session):
     bot.send_message(CHAT_ID, "Bem vindo *{}*! \nEu sou o Mandachuva aqui! Se precisar de minha ajuda digite /info 😉"
     .format(session.new_chat_member.first_name), parse_mode=ParseMode.MARKDOWN)
+    sleep(10)
 
 @bot.message_handler(func=lambda m: True)
 def reply(session):
@@ -106,6 +125,7 @@ def reply(session):
         for event in events:
             txtmsg = txtmsg + "\n\n📅 Data: {}\n🕰 Hora: {}\n🧭 Local: {}\n🏷 Status: {}".format(event['data'], event['hora'], event['local'], event['status'])
         bot.send_message(CHAT_ID, txtmsg)
+        sleep(10)
 
     elif re.findall("^clima", session.text.lower()):
         msg = ""
@@ -153,6 +173,10 @@ def reply(session):
         formated_hour = datetime.datetime.strptime(events['date'], "%Y-%m-%d %H:%M:%S").strftime("%H:%M:%S")
         msg = msg + "📆 Data: {}\n⏰ Hora: {}\n🌡 Temperatura: {}º\n😎 Sensasão térmica: {}º \n💧 Humidade: {}% \n📜 Condição: {}".format(formated_date, formated_hour, events['temperature'], events['sensation'], events['humidity'], events['condition'])
         bot.send_message(CHAT_ID, msg, parse_mode=ParseMode.MARKDOWN)
+        sleep(10)
+
+    elif re.findall("linux",session.text.lower()):
+        bot.reply_to(session, "https://media.giphy.com/media/2aPePPqpAf5jwjtt2p/giphy.gif")
 
     elif re.findall("servlet",session.text.lower()):
         bot.reply_to(session, "https://media.giphy.com/media/3o7TKMEJrkqKFWea5i/giphy.gif")
@@ -169,10 +193,12 @@ def reply(session):
     elif re.findall("boa noite",session.text.lower()):
         bot.reply_to(session, "Boa noite pra você também {}!".format(session.from_user.first_name))
 
+    elif re.findall("teu maddog",session.text.lower()):
+        bot.reply_to(session, "https://avatars1.githubusercontent.com/u/19822650?s=460&v=4")
+
     elif re.findall("hoje",session.text.lower()):
         hoje = datetime.datetime.today()
         semana = hoje.strftime("%w")
-
         if semana == 5:
             bot.reply_to(session, "Hoje é sexta feira carai! https://www.youtube.com/watch?v=052UiCa7xa8")
 
