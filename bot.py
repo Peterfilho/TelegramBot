@@ -15,8 +15,10 @@ from conf.settings import TELEGRAM_TOKEN
 from conf.settings import CHAT_ID
 from conf.settings import WHEATHER_TOKEN
 from conf.settings import TRACK_TOKEN
+from flask import Flask, request
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
+server = Flask(__name__)
 
 @bot.message_handler(commands=['info'])
 def info(session):
@@ -38,7 +40,6 @@ def commands(session):
     "/joke - Charada Aleatória.\n"
     "\n🔍 *Rastrear uma encomenda*: Escreva rastrear seguido do código de rastreamento. Exemplo: *rastrear PL059497789BR*\n"
     "\n🌦 *Informações climaticas*: Escreva clima seguido da cidade e sigla do estado. Exemplo *Clima Guarapuava PR*", parse_mode=ParseMode.MARKDOWN)
-    sleep(10)
 
 @bot.message_handler(commands=['t','test'])
 def test(session):
@@ -53,7 +54,7 @@ def blog(session):
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
     bot.reply_to(session, text=(rss_d.entries[0]['link']))
-    sleep(10)
+#    sleep(10)
 
 @bot.message_handler(commands=['ahnegao', 'AhNegao'])
 def blog(session):
@@ -61,7 +62,7 @@ def blog(session):
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
     bot.reply_to(session, text=(rss_d.entries[0]['link']))
-    sleep(10)
+#    sleep(10)
 
 @bot.message_handler(commands=['blog','3c'])
 def blog(session):
@@ -69,7 +70,7 @@ def blog(session):
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
     bot.reply_to(session, text=(rss_d.entries[0]['link']))
-    sleep(10)
+#    sleep(10)
 
 @bot.message_handler(commands=['dolar', 'Dolar'])
 def dolar(session):
@@ -78,7 +79,7 @@ def dolar(session):
     data = data['USD']
     bot.reply_to(session, "💵 Nome: {} \n🔄 Valor em R$: {} \n⏱ Ultima atualização: {}"
     .format(data['name'],data['bid'],data['create_date']))
-    sleep(10)
+#    sleep(10)
 
 @bot.message_handler(commands=['bitcoin','Bitcoin'])
 def bitcoin(session):
@@ -87,7 +88,7 @@ def bitcoin(session):
     data = data['BTC']
     bot.reply_to(session, "📊 Nome: {} \n🔄 Valor em R$: {} \n⏱ Ultima atualização: {}"
     .format(data['name'],data['bid'],data['create_date']))
-    sleep(10)
+#    sleep(10)
 
 @bot.message_handler(commands=['joke', 'piada'])
 def dolar(session):
@@ -95,15 +96,15 @@ def dolar(session):
     headers = {'accept': 'application/json'}
     r = requests.post(url, headers=headers)
     data = r.json()
-    bot.reply_to(session, "Charada Aleatória: \n \n\n{} \n\nResposta: {}"
+    bot.reply_to(session, "Charada Aleatória: \n \n{} \n\nResposta: {}"
     .format(data['pergunta'],data['resposta']))
-    sleep(10)
+#    sleep(10)
 
 @bot.message_handler(content_types = ['new_chat_members'])
 def wellcome_message(session):
     bot.send_message(CHAT_ID, "Bem vindo *{}*! \nEu sou o Mandachuva aqui! Se precisar de minha ajuda digite /info 😉"
     .format(session.new_chat_member.first_name), parse_mode=ParseMode.MARKDOWN)
-    sleep(10)
+#    sleep(10)
 
 @bot.message_handler(func=lambda m: True)
 def reply(session):
@@ -159,12 +160,12 @@ def reply(session):
         data_content = "localeId[]={}".format(id)
         resp = requests.put("http://apiadvisor.climatempo.com.br/api-manager/user-token/{}/locales".format(WHEATHER_TOKEN), data=data_content, headers=headers)
         if resp.status_code != 200:
-            bot.send_message(CHAT_ID, "⚠ Error: {}".format(resp))
+            bot.send_message(CHAT_ID, "⚠ Error: {}".format(resp.content))
             print("Error when try to register city to wheather token")
             return
         r = requests.get("http://apiadvisor.climatempo.com.br/api/v1/weather/locale/{}/current?token={}".format(id, WHEATHER_TOKEN))
         if r.status_code != 200:
-            bot.send_message(CHAT_ID, "⚠ Error: ".format(r))
+            bot.send_message(CHAT_ID, "⚠ Error: ".format(r.content))
             print("Error when try to get wheather")
             return
         content = r.json()
@@ -173,7 +174,7 @@ def reply(session):
         formated_hour = datetime.datetime.strptime(events['date'], "%Y-%m-%d %H:%M:%S").strftime("%H:%M:%S")
         msg = msg + "📆 Data: {}\n⏰ Hora: {}\n🌡 Temperatura: {}º\n😎 Sensasão térmica: {}º \n💧 Humidade: {}% \n📜 Condição: {}".format(formated_date, formated_hour, events['temperature'], events['sensation'], events['humidity'], events['condition'])
         bot.send_message(CHAT_ID, msg, parse_mode=ParseMode.MARKDOWN)
-        sleep(10)
+#        sleep(10)
 
     elif re.findall("linux",session.text.lower()):
         bot.reply_to(session, "https://media.giphy.com/media/2aPePPqpAf5jwjtt2p/giphy.gif")
@@ -196,10 +197,26 @@ def reply(session):
     elif re.findall("teu maddog",session.text.lower()):
         bot.reply_to(session, "https://avatars1.githubusercontent.com/u/19822650?s=460&v=4")
 
+    elif re.findall("o jogo",session.text.lower()):
+        bot.reply_to(session, "Perdi 😭")
+
     elif re.findall("hoje",session.text.lower()):
         hoje = datetime.datetime.today()
         semana = hoje.strftime("%w")
         if semana == 5:
             bot.reply_to(session, "Hoje é sexta feira carai! https://www.youtube.com/watch?v=052UiCa7xa8")
 
-bot.polling()
+#bot.polling()
+@server.route('/' + TELEGRAM_TOKEN, methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
+
+@server.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://young-temple-04015.herokuapp.com/' + TELEGRAM_TOKEN)
+    return "!", 200
+
+if __name__ == "__main__":
+    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
