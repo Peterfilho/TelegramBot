@@ -6,7 +6,6 @@ import time
 import re
 from datetime import date
 from datetime import datetime
-#from telegram import ParseMode
 from time import sleep
 import datetime
 import json
@@ -208,6 +207,7 @@ def reply(session):
 
 #bot.polling()
 @server.route('/' + TELEGRAM_TOKEN, methods=['POST'])
+@server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
 def getMessage():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
     return "!", 200
