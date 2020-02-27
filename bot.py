@@ -14,11 +14,11 @@ from conf.settings import TELEGRAM_TOKEN
 from conf.settings import CHAT_ID
 from conf.settings import WHEATHER_TOKEN
 from conf.settings import TRACK_TOKEN
-#from flask import Flask, request
+from flask import Flask, request
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
-#server = Flask(__name__)
-port = int(os.environ.get("PORT", 5000))
+server = Flask(__name__)
+
 
 @bot.message_handler(commands=['info'])
 def info(session):
@@ -206,18 +206,18 @@ def reply(session):
         if semana == 5:
             bot.reply_to(session, "Hoje é sexta feira carai! https://www.youtube.com/watch?v=052UiCa7xa8")
 
-bot.polling()
-#@server.route('/' + TELEGRAM_TOKEN, methods=['POST'])
-#@server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
-#def getMessage():
-#    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-#    return "!", 200
+#bot.polling()
+@server.route('/' + TELEGRAM_TOKEN, methods=['POST'])
+@server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
 
-#@server.route("/")
-#def webhook():
-#    bot.remove_webhook()
-#    bot.set_webhook(url='https://young-temple-04015.herokuapp.com/' + TELEGRAM_TOKEN)
-#    return "!", 200
+@server.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://young-temple-04015.herokuapp.com/' + TELEGRAM_TOKEN)
+    return "!", 200
 
-#if __name__ == "__main__":
-#    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+if __name__ == "__main__":
+    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
