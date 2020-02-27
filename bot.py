@@ -14,10 +14,10 @@ from conf.settings import TELEGRAM_TOKEN
 from conf.settings import CHAT_ID
 from conf.settings import WHEATHER_TOKEN
 from conf.settings import TRACK_TOKEN
-from flask import Flask, request
+#from flask import Flask, request
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
-server = Flask(__name__)
+#server = Flask(__name__)
 
 @bot.message_handler(commands=['info'])
 def info(session):
@@ -53,7 +53,7 @@ def blog(session):
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
     bot.reply_to(session, text=(rss_d.entries[0]['link']))
-#    sleep(10)
+    sleep(10)
 
 @bot.message_handler(commands=['ahnegao', 'AhNegao'])
 def blog(session):
@@ -61,7 +61,7 @@ def blog(session):
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
     bot.reply_to(session, text=(rss_d.entries[0]['link']))
-#    sleep(10)
+    sleep(10)
 
 @bot.message_handler(commands=['blog','3c'])
 def blog(session):
@@ -69,7 +69,7 @@ def blog(session):
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
     bot.reply_to(session, text=(rss_d.entries[0]['link']))
-#    sleep(10)
+    sleep(10)
 
 @bot.message_handler(commands=['dolar', 'Dolar'])
 def dolar(session):
@@ -78,7 +78,7 @@ def dolar(session):
     data = data['USD']
     bot.reply_to(session, "💵 Nome: {} \n🔄 Valor em R$: {} \n⏱ Ultima atualização: {}"
     .format(data['name'],data['bid'],data['create_date']))
-#    sleep(10)
+    sleep(10)
 
 @bot.message_handler(commands=['bitcoin','Bitcoin'])
 def bitcoin(session):
@@ -87,7 +87,7 @@ def bitcoin(session):
     data = data['BTC']
     bot.reply_to(session, "📊 Nome: {} \n🔄 Valor em R$: {} \n⏱ Ultima atualização: {}"
     .format(data['name'],data['bid'],data['create_date']))
-#    sleep(10)
+    sleep(10)
 
 @bot.message_handler(commands=['joke', 'piada'])
 def dolar(session):
@@ -97,13 +97,13 @@ def dolar(session):
     data = r.json()
     bot.reply_to(session, "Charada Aleatória: \n \n{} \n\nResposta: {}"
     .format(data['pergunta'],data['resposta']))
-#    sleep(10)
+    sleep(10)
 
 @bot.message_handler(content_types = ['new_chat_members'])
 def wellcome_message(session):
     bot.send_message(CHAT_ID, "Bem vindo *{}*! \nEu sou o Mandachuva aqui! Se precisar de minha ajuda digite /info 😉"
     .format(session.new_chat_member.first_name), parse_mode='MARKDOWN')
-#    sleep(10)
+    sleep(10)
 
 @bot.message_handler(func=lambda m: True)
 def reply(session):
@@ -205,18 +205,18 @@ def reply(session):
         if semana == 5:
             bot.reply_to(session, "Hoje é sexta feira carai! https://www.youtube.com/watch?v=052UiCa7xa8")
 
-#bot.polling()
-@server.route('/' + TELEGRAM_TOKEN, methods=['POST'])
-@server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
-def getMessage():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-    return "!", 200
+bot.polling()
+#@server.route('/' + TELEGRAM_TOKEN, methods=['POST'])
+#@server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
+#def getMessage():
+#    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+#    return "!", 200
 
-@server.route("/")
-def webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url='https://young-temple-04015.herokuapp.com/' + TELEGRAM_TOKEN)
-    return "!", 200
+#@server.route("/")
+#def webhook():
+#    bot.remove_webhook()
+#    bot.set_webhook(url='https://young-temple-04015.herokuapp.com/' + TELEGRAM_TOKEN)
+#    return "!", 200
 
-if __name__ == "__main__":
-    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+#if __name__ == "__main__":
+#    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
