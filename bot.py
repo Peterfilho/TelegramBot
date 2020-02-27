@@ -6,7 +6,6 @@ import time
 import re
 from datetime import date
 from datetime import datetime
-#from telegram import ParseMode
 from time import sleep
 import datetime
 import json
