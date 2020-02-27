@@ -206,7 +206,7 @@ def reply(session):
             bot.reply_to(session, "Hoje é sexta feira carai! https://www.youtube.com/watch?v=052UiCa7xa8")
 
 #bot.polling()
-@server.route('/' + TELEGRAM_TOKEN, methods=['POST'])
+#@server.route('/' + TELEGRAM_TOKEN, methods=['POST'])
 @server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
 def getMessage():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
