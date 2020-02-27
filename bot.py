@@ -6,7 +6,7 @@ import time
 import re
 from datetime import date
 from datetime import datetime
-from telegram import ParseMode
+#from telegram import ParseMode
 from time import sleep
 import datetime
 import json
@@ -29,7 +29,7 @@ def info(session):
     "basta digitar rastrear seguido do codigo de rastreio de sua encomenda\n"
     "Para condições climaticas basta digitar clima seguido de sua cidade e estado."
     "\n \nCriado por: *Peterson Medeiros*"
-    .format(session.from_user.first_name, session.chat.title), parse_mode=ParseMode.MARKDOWN)
+    .format(session.from_user.first_name, session.chat.title), parse_mode='MARKDOWN')
 
 @bot.message_handler(commands=['comandos','Comandos'])
 def commands(session):
@@ -39,7 +39,7 @@ def commands(session):
     "/bitcoin - Cotação atual do Bitcoin.\n"
     "/joke - Charada Aleatória.\n"
     "\n🔍 *Rastrear uma encomenda*: Escreva rastrear seguido do código de rastreamento. Exemplo: *rastrear PL059497789BR*\n"
-    "\n🌦 *Informações climaticas*: Escreva clima seguido da cidade e sigla do estado. Exemplo *Clima Guarapuava PR*", parse_mode=ParseMode.MARKDOWN)
+    "\n🌦 *Informações climaticas*: Escreva clima seguido da cidade e sigla do estado. Exemplo *Clima Guarapuava PR*", parse_mode='MARKDOWN')
 
 @bot.message_handler(commands=['t','test'])
 def test(session):
@@ -103,7 +103,7 @@ def dolar(session):
 @bot.message_handler(content_types = ['new_chat_members'])
 def wellcome_message(session):
     bot.send_message(CHAT_ID, "Bem vindo *{}*! \nEu sou o Mandachuva aqui! Se precisar de minha ajuda digite /info 😉"
-    .format(session.new_chat_member.first_name), parse_mode=ParseMode.MARKDOWN)
+    .format(session.new_chat_member.first_name), parse_mode='MARKDOWN')
 #    sleep(10)
 
 @bot.message_handler(func=lambda m: True)
@@ -135,7 +135,7 @@ def reply(session):
         if not re.findall("^[Cc]lima\s+?([-\wÀ-ú ']+?)\s+?([a-zA-Z]{2})$", search):
             bot.send_message(CHAT_ID,"⚠ Desculpe, não consegui entender qual é a cidade e o estado.\n"
             "Poderia por favor digitar novamente?\nPrimeiro cidade, depois estado.\n"
-            "Exemplo: *Clima Guarapuava PR*", parse_mode=ParseMode.MARKDOWN)
+            "Exemplo: *Clima Guarapuava PR*", parse_mode='MARKDOWN')
             print("City or state not found!")
             return
         args = re.findall("^[Cc]lima\s+?([-\wÀ-ú ']+?)\s+?([a-zA-Z]{2})$", search)
@@ -173,7 +173,7 @@ def reply(session):
         formated_date = datetime.datetime.strptime(events['date'], "%Y-%m-%d %H:%M:%S").strftime("%d/%m/%Y")
         formated_hour = datetime.datetime.strptime(events['date'], "%Y-%m-%d %H:%M:%S").strftime("%H:%M:%S")
         msg = msg + "📆 Data: {}\n⏰ Hora: {}\n🌡 Temperatura: {}º\n😎 Sensasão térmica: {}º \n💧 Humidade: {}% \n📜 Condição: {}".format(formated_date, formated_hour, events['temperature'], events['sensation'], events['humidity'], events['condition'])
-        bot.send_message(CHAT_ID, msg, parse_mode=ParseMode.MARKDOWN)
+        bot.send_message(CHAT_ID, msg, parse_mode='MARKDOWN')
 #        sleep(10)
 
     elif re.findall("linux",session.text.lower()):
