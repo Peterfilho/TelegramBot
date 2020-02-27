@@ -18,7 +18,7 @@ from conf.settings import TRACK_TOKEN
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 #server = Flask(__name__)
-port = int(os.environ.get(“PORT”, 5000))
+port = int(os.environ.get("PORT", 5000))
 
 @bot.message_handler(commands=['info'])
 def info(session):
@@ -206,7 +206,7 @@ def reply(session):
         if semana == 5:
             bot.reply_to(session, "Hoje é sexta feira carai! https://www.youtube.com/watch?v=052UiCa7xa8")
 
-#bot.polling()
+bot.polling()
 #@server.route('/' + TELEGRAM_TOKEN, methods=['POST'])
 #@server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
 #def getMessage():
