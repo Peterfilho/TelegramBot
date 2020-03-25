@@ -131,7 +131,7 @@ def corona(session):
        "Casos recuperados: {}\n"
        "Novos casos recentes: {}\n"
        .format(aux['total_cases'],aux['total_deaths'], aux['active_cases'], aux['serious_critical'], aux['total_recovered'], aux['new_cases']))
-       sleep(10)
+    sleep(10)
 
 @bot.message_handler(func=lambda m: True)
 def reply(session):
