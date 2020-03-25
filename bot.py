@@ -106,8 +106,37 @@ def wellcome_message(session):
     .format(session.new_chat_member.first_name), parse_mode='MARKDOWN')
     sleep(10)
 
+
+@bot.message_handler(commands=['corona'])
+def corona(session):
+    url = "https://coronavirus-monitor.p.rapidapi.com/coronavirus/latest_stat_by_country.php?country=brazil"
+
+    headers = {
+        'x-rapidapi-host': "coronavirus-monitor.p.rapidapi.com",
+        'x-rapidapi-key': "9202259c1dmsh5a204e93ff9f9c4p19d5cfjsn75e520c8ab51"
+    }
+    r = requests.get(url, headers=headers)
+    data = r.json()
+
+    print("Resultado: {}".format(data))
+    auxs = data['latest_stat_by_country']
+
+    for aux in auxs:
+        bot.reply_to(session, "⚠ Casos de Corona vírus (COVID-19) no Brasil:\n"
+        "\n"
+       "Total de casos: {}\n"
+       "Total de mortes: {}\n"
+       "Casos ativos: {}\n"
+       "Casos criticos: {}\n"
+       "Casos recuperados: {}\n"
+       "Novos casos recentes: {}\n"
+       .format(aux['total_cases'],aux['total_deaths'], aux['active_cases'], aux['serious_critical'], aux['total_recovered'], aux['new_cases']))
+       sleep(10)
+
 @bot.message_handler(func=lambda m: True)
 def reply(session):
+    hoje = datetime.datetime.today()
+    semana = hoje.strftime("%w")
 
     if re.findall("windows",session.text.lower()):
         bot.reply_to(session, "https://tenor.com/IAlp.gif")
@@ -200,14 +229,16 @@ def reply(session):
     elif re.findall("o jogo",session.text.lower()):
         bot.reply_to(session, "Perdi 😭")
 
+    elif re.findall("coronga",session.text.lower()):
+        bot.reply_to(session, "😷 Use máscara e lave bem as mãos para se proteger do coronga! \n Para saber detalhes use comando /corona")
+
     elif re.findall("hoje",session.text.lower()):
-        hoje = datetime.datetime.today()
-        semana = hoje.strftime("%w")
         if semana == 5:
-            bot.reply_to(session, "Hoje é sexta feira carai! https://www.youtube.com/watch?v=052UiCa7xa8")
+            bot.reply_to(session, "Hoje é sexta feira carai! https://www.youtube.com/watch?v=gNkLGEUae_s")
+        elif semana == 7:
+            bot.reply_to(session, "Fique de boas fera, hoje é dia de descansar 😌")
 
 #bot.polling()
-#@server.route('/' + TELEGRAM_TOKEN, methods=['POST'])
 @server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
 def getMessage():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
