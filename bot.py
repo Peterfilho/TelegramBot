@@ -111,7 +111,7 @@ def wellcome_message(session):
 
 @bot.message_handler(commands=['corona'])
 def corona(session):
-    url = "https://coronavirus-monitor.p.rapidapi.com/coronavirus/latest_stat_by_country_name.php?country=brazil"
+    url = "https://coronavirus-monitor.p.rapidapi.com/coronavirus/latest_stat_by_country.php?country=brazil"
 
     headers = {
         'x-rapidapi-host': "coronavirus-monitor.p.rapidapi.com",
@@ -133,6 +133,7 @@ def corona(session):
        "Casos recuperados: {}\n"
        "Casos identificados hoje: {}\n"
        .format(aux['total_cases'],aux['total_deaths'], aux['active_cases'], aux['serious_critical'], aux['total_recovered'], aux['new_cases']))
+
     sleep(10)
 
 @bot.message_handler(func=lambda m: True)
