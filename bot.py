@@ -33,11 +33,14 @@ def info(session):
 
 @bot.message_handler(commands=['comandos','Comandos'])
 def commands(session):
-    bot.send_message(CHAT_ID, "/info - Obtem informações sobre o Bot.\n/9g - Meme aleatório do 9gag.\n/AhNegao - Meme aleatório do Ah Negão.\n"
+    bot.send_message(CHAT_ID, "/info - Obtem informações sobre o Bot.\n"
+    "/9g - Meme aleatório do 9gag.\n"
+    "/AhNegao - Meme aleatório do Ah Negão.\n"
     "/3c - Noticias do site da 3c Plus.\n"
     "/dolar - Cotação atual do Dolar.\n"
     "/bitcoin - Cotação atual do Bitcoin.\n"
     "/joke - Charada Aleatória.\n"
+    "/corona - Estatísticas sobre o (COVID-19) corona vírus.\n"
     "\n🔍 *Rastrear uma encomenda*: Escreva rastrear seguido do código de rastreamento. Exemplo: *rastrear PL059497789BR*\n"
     "\n🌦 *Informações climaticas*: Escreva clima seguido da cidade e sigla do estado. Exemplo *Clima Guarapuava PR*", parse_mode='MARKDOWN')
 
@@ -49,7 +52,7 @@ def test(session):
     bot.reply_to(session, text=(rss_d.entries[0]['link']))
 
 @bot.message_handler(commands=['9gag', '9g'])
-def blog(session):
+def ninegag(session):
     url = "http://9gagrss.com/feed"
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
@@ -57,7 +60,7 @@ def blog(session):
     sleep(10)
 
 @bot.message_handler(commands=['ahnegao', 'AhNegao'])
-def blog(session):
+def ahnegao(session):
     url = "https://www.ahnegao.com.br/feed"
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
@@ -65,7 +68,7 @@ def blog(session):
     sleep(10)
 
 @bot.message_handler(commands=['blog','3c'])
-def blog(session):
+def 3c(session):
     url = "https://3cplusnow.com/feed"
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
@@ -91,7 +94,7 @@ def bitcoin(session):
     sleep(10)
 
 @bot.message_handler(commands=['joke', 'piada'])
-def dolar(session):
+def joke(session):
     url = 'https://us-central1-kivson.cloudfunctions.net/charada-aleatoria'
     headers = {'accept': 'application/json'}
     r = requests.post(url, headers=headers)
@@ -106,10 +109,9 @@ def wellcome_message(session):
     .format(session.new_chat_member.first_name), parse_mode='MARKDOWN')
     sleep(10)
 
-
 @bot.message_handler(commands=['corona'])
 def corona(session):
-    url = "https://coronavirus-monitor.p.rapidapi.com/coronavirus/latest_stat_by_country.php?country=brazil"
+    url = "https://coronavirus-monitor.p.rapidapi.com/coronavirus/latest_stat_by_country_name.php?country=brazil"
 
     headers = {
         'x-rapidapi-host': "coronavirus-monitor.p.rapidapi.com",
@@ -129,7 +131,7 @@ def corona(session):
        "Casos ativos: {}\n"
        "Casos criticos: {}\n"
        "Casos recuperados: {}\n"
-       "Novos casos recentes: {}\n"
+       "Casos identificados hoje: {}\n"
        .format(aux['total_cases'],aux['total_deaths'], aux['active_cases'], aux['serious_critical'], aux['total_recovered'], aux['new_cases']))
     sleep(10)
 
@@ -232,12 +234,17 @@ def reply(session):
     elif re.findall("coronga",session.text.lower()):
         bot.reply_to(session, "😷 Use máscara e lave bem as mãos para se proteger do coronga! \n Para saber detalhes use comando /corona")
 
-    elif re.findall("hoje",session.text.lower()):
-        if semana == 5:
-            bot.reply_to(session, "Hoje é sexta feira carai! https://www.youtube.com/watch?v=gNkLGEUae_s")
-        elif semana == 7:
-            bot.reply_to(session, "Fique de boas fera, hoje é dia de descansar 😌")
+    elif re.findall("java",session.text.lower()):
+        bot.reply_to(session, "https://media.giphy.com/media/17mNCcKU1mJlrbXodo/giphy.gif")
 
+    elif re.findall("hoje",session.text.lower()):
+        if semana == '5':
+            bot.reply_to(session, "Hoje é sexta feira carai! https://www.youtube.com/watch?v=gNkLGEUae_s")
+            return
+        elif semana == '7':
+            bot.reply_to(session, "Fique de boas fera, hoje é dia de descansar 😌")
+            return
+            
 #bot.polling()
 @server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
 def getMessage():
