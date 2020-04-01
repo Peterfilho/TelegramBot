@@ -68,7 +68,7 @@ def ahnegao(session):
     sleep(10)
 
 @bot.message_handler(commands=['blog','3c'])
-def 3c(session):
+def blog3c(session):
     url = "https://3cplusnow.com/feed"
     rss_d = feedparser.parse(url)
     rss_d.entries[0]['link']
@@ -244,7 +244,7 @@ def reply(session):
         elif semana == '7':
             bot.reply_to(session, "Fique de boas fera, hoje é dia de descansar 😌")
             return
-            
+
 #bot.polling()
 @server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
 def getMessage():
