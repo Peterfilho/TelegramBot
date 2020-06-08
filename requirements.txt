@@ -18,7 +18,6 @@ numpy==1.18.1
 pony==0.7.12
 pyasn1==0.1.9
 pycparser==2.19
-pycrypto==2.6.1
 pycups==1.9.73
 pycurl==7.43.0
 pyTelegramBotAPI==3.6.7

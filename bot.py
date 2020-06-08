@@ -33,7 +33,7 @@ def info(session):
 
 @bot.message_handler(commands=['comandos','Comandos'])
 def commands(session):
-    bot.send_message(CHAT_ID, "/info - Obtem informações sobre o Bot.\n"
+    bot.send_message(session.chat.id, "/info - Obtem informações sobre o Bot.\n"
     "/9g - Meme aleatório do 9gag.\n"
     "/AhNegao - Meme aleatório do Ah Negão.\n"
     "/3c - Noticias do site da 3c Plus.\n"
@@ -42,7 +42,9 @@ def commands(session):
     "/joke - Charada Aleatória.\n"
     "/corona - Estatísticas sobre o (COVID-19) corona vírus.\n"
     "\n🔍 *Rastrear uma encomenda*: Escreva rastrear seguido do código de rastreamento. Exemplo: *rastrear PL059497789BR*\n"
-    "\n🌦 *Informações climaticas*: Escreva clima seguido da cidade e sigla do estado. Exemplo *Clima Guarapuava PR*", parse_mode='MARKDOWN')
+    "\n🌦 *Informações climaticas*: Escreva clima seguido da cidade e sigla do estado. Exemplo *Clima Guarapuava PR*"
+    "\n Para saber status do COVID-19 de um estado específico utilize o comando corona seguido da sigla do estado. "
+    "Exemplo: *corona PR*", parse_mode='MARKDOWN')
 
 @bot.message_handler(commands=['t','test'])
 def test(session):
@@ -105,7 +107,7 @@ def joke(session):
 
 @bot.message_handler(content_types = ['new_chat_members'])
 def wellcome_message(session):
-    bot.send_message(CHAT_ID, "Bem vindo *{}*! \nEu sou o Mandachuva aqui! Se precisar de minha ajuda digite /info 😉"
+    bot.send_message(session.chat.id, "Bem vindo *{}*! \nEu sou o Mandachuva aqui! Se precisar de minha ajuda digite /info 😉"
     .format(session.new_chat_member.first_name), parse_mode='MARKDOWN')
     sleep(10)
 
@@ -145,7 +147,7 @@ def reply(session):
         bot.reply_to(session, "https://tenor.com/IAlp.gif")
 
     elif re.findall("^rastrear", session.text.lower()):
-        bot.send_chat_action(CHAT_ID, 'typing')
+        bot.send_chat_action(session.chat.id, 'typing')
         if not re.findall(r"...........br", session.text.lower()):
             bot.reply_to(session, "😥 Desculpe! \nSó consigo localizar encomendas do Brasil")
             return
@@ -157,15 +159,15 @@ def reply(session):
         txtmsg = "Segundo o site Linketrack \n\n🔎 Código: {}\n📦 Serviço: {}\n".format(data['codigo'],data['servico'])
         for event in events:
             txtmsg = txtmsg + "\n\n📅 Data: {}\n🕰 Hora: {}\n🧭 Local: {}\n🏷 Status: {}".format(event['data'], event['hora'], event['local'], event['status'])
-        bot.send_message(CHAT_ID, txtmsg)
+        bot.send_message(session.chat.id, txtmsg)
         sleep(10)
 
     elif re.findall("^clima", session.text.lower()):
         msg = ""
-        bot.send_chat_action(CHAT_ID, 'typing')
+        bot.send_chat_action(session.chat.id, 'typing')
         search = session.text
         if not re.findall("^[Cc]lima\s+?([-\wÀ-ú ']+?)\s+?([a-zA-Z]{2})$", search):
-            bot.send_message(CHAT_ID,"⚠ Desculpe, não consegui entender qual é a cidade e o estado.\n"
+            bot.send_message(session.chat.id,"⚠ Desculpe, não consegui entender qual é a cidade e o estado.\n"
             "Poderia por favor digitar novamente?\nPrimeiro cidade, depois estado.\n"
             "Exemplo: *Clima Guarapuava PR*", parse_mode='MARKDOWN')
             print("City or state not found!")
@@ -175,7 +177,7 @@ def reply(session):
         state = args[0][1]
         r = requests.get("http://apiadvisor.climatempo.com.br/api/v1/locale/city?name={}&state={}&token={}".format(city, state, WHEATHER_TOKEN))
         if r.content == b'[]' or r.status_code != 200:
-            bot.send_message(CHAT_ID, "⚠ Ops, algo deu errado!\n"
+            bot.send_message(session.chat.id, "⚠ Ops, algo deu errado!\n"
             "Verifique por favor se o nome da cidade está correto e acentuado\n"
             "Ou também se o estado está correto")
             print("error when try to find city id")
@@ -192,12 +194,12 @@ def reply(session):
         data_content = "localeId[]={}".format(id)
         resp = requests.put("http://apiadvisor.climatempo.com.br/api-manager/user-token/{}/locales".format(WHEATHER_TOKEN), data=data_content, headers=headers)
         if resp.status_code != 200:
-            bot.send_message(CHAT_ID, "⚠ Error: {}".format(resp.content))
+            bot.send_message(session.chat.id, "⚠ Error: {}".format(resp.content))
             print("Error when try to register city to wheather token")
             return
         r = requests.get("http://apiadvisor.climatempo.com.br/api/v1/weather/locale/{}/current?token={}".format(id, WHEATHER_TOKEN))
         if r.status_code != 200:
-            bot.send_message(CHAT_ID, "⚠ Error: ".format(r.content))
+            bot.send_message(session.chat.id, "⚠ Error: ".format(r.content))
             print("Error when try to get wheather")
             return
         content = r.json()
@@ -205,8 +207,32 @@ def reply(session):
         formated_date = datetime.datetime.strptime(events['date'], "%Y-%m-%d %H:%M:%S").strftime("%d/%m/%Y")
         formated_hour = datetime.datetime.strptime(events['date'], "%Y-%m-%d %H:%M:%S").strftime("%H:%M:%S")
         msg = msg + "📆 Data: {}\n⏰ Hora: {}\n🌡 Temperatura: {}º\n😎 Sensasão térmica: {}º \n💧 Humidade: {}% \n📜 Condição: {}".format(formated_date, formated_hour, events['temperature'], events['sensation'], events['humidity'], events['condition'])
-        bot.send_message(CHAT_ID, msg, parse_mode='MARKDOWN')
+        bot.send_message(session.chat.id, msg, parse_mode='MARKDOWN')
 #        sleep(10)
+
+    elif re.findall("^corona", session.text.lower()):
+        search = session.text
+        items = search.split(" ")
+        print(items)
+        print(len(items))
+        if len(items) < 2:
+            bot.reply_to(session, "Não consegui identificar o estado que deseja pesquisar, por favor digite novamente"
+            "conforme o exemplo abaixo:"
+            "\nExemplo: *corona PR*", parse_mode='MARKDOWN')
+            return
+        state = items[1]
+        print(state)
+        r = requests.get("https://covid19-brazil-api.now.sh/api/report/v1/brazil/uf/{}".format(state))
+        data = r.json()
+        print(data)
+        bot.reply_to(session, "⚠ Casos de COVID-19 no estado de *{}*:"
+        "\n🔴 Casos: {}"
+        "\n🟠 Suspeitos: {}"
+        "\n🟢 Descartados: {}"
+        "\n⚫ Mortes: {}"
+        "\n"
+        "\n*Fonte:* [covid19-brazil-api](https://covid19-brazil-api.now.sh/)"
+        .format(data['state'], data['cases'], data['suspects'], data['refuses'], data['deaths']), parse_mode='MARKDOWN')
 
     elif re.findall("linux",session.text.lower()):
         bot.reply_to(session, "https://media.giphy.com/media/2aPePPqpAf5jwjtt2p/giphy.gif")
