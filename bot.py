@@ -42,7 +42,7 @@ def commands(session):
     "/joke - Charada Aleatória.\n"
     "/corona - Estatísticas sobre o (COVID-19) corona vírus.\n"
     "\n🔍 *Rastrear uma encomenda*: Escreva rastrear seguido do código de rastreamento. Exemplo: *rastrear PL059497789BR*\n"
-    "\n🌦 *Informações climaticas*: Escreva clima seguido da cidade e sigla do estado. Exemplo *Clima Guarapuava PR*"
+    "\n🌦 *Informações climaticas*: Escreva clima seguido da cidade e sigla do estado. Exemplo *Clima Guarapuava PR*\n"
     "\n Para saber status do COVID-19 de um estado específico utilize o comando corona seguido da sigla do estado. "
     "Exemplo: *corona PR*", parse_mode='MARKDOWN')
 
@@ -126,15 +126,33 @@ def corona(session):
     auxs = data['latest_stat_by_country']
 
     for aux in auxs:
-        bot.reply_to(session, "⚠ Casos de Corona vírus (COVID-19) no Brasil:\n"
+        bot.reply_to(session, "\n⚠ Casos de Corona vírus (COVID-19) no Brasil:\n"
         "\n"
+       "*Casos*\n"
        "Total de casos: {}\n"
        "Total de mortes: {}\n"
        "Casos ativos: {}\n"
        "Casos criticos: {}\n"
        "Casos recuperados: {}\n"
        "Casos identificados hoje: {}\n"
-       .format(aux['total_cases'],aux['total_deaths'], aux['active_cases'], aux['serious_critical'], aux['total_recovered'], aux['new_cases']))
+       "Casos a cada milhão: {}\n"
+       "\n"
+       "*Testes*:\n"
+       "Total de testes a cada milhão: {}\n"
+
+       "\n*Fontes*: \n"
+       "https://www.cdc.gov/ \n"
+       "https://coronavirus.jhu.edu/map.html \n"
+       .format(
+            aux['total_cases'],
+            aux['total_deaths'],
+            aux['active_cases'],
+            aux['serious_critical'],
+            aux['total_recovered'],
+            aux['new_cases'],
+            aux['total_tests_per1m'],
+            aux['total_cases_per1m']),
+        disable_web_page_preview=True, parse_mode='MARKDOWN')
 
     sleep(10)
 
@@ -213,8 +231,8 @@ def reply(session):
     elif re.findall("^corona", session.text.lower()):
         search = session.text
         items = search.split(" ")
-        print(items)
-        print(len(items))
+        # print(items)
+        # print(len(items))
         if len(items) < 2:
             bot.reply_to(session, "Não consegui identificar o estado que deseja pesquisar, por favor digite novamente"
             "conforme o exemplo abaixo:"
@@ -272,7 +290,7 @@ def reply(session):
             bot.reply_to(session, "Fique de boas fera, hoje é dia de descansar 😌")
             return
 
-#bot.polling()
+# bot.polling()
 @server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
 def getMessage():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
