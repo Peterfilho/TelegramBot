@@ -17,8 +17,7 @@ from conf.settings import TRACK_TOKEN
 from flask import Flask, request
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
-server = Flask(__name__)
-
+# server = Flask(__name__)
 
 @bot.message_handler(commands=['info'])
 def info(session):
@@ -290,17 +289,17 @@ def reply(session):
             bot.reply_to(session, "Fique de boas fera, hoje é dia de descansar 😌")
             return
 
-# bot.polling()
-@server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
-def getMessage():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-    return "!", 200
-
-@server.route("/")
-def webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url='https://young-temple-04015.herokuapp.com/' + TELEGRAM_TOKEN)
-    return "!", 200
-
-if __name__ == "__main__":
-    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+bot.polling()
+# @server.route("/{}".format(TELEGRAM_TOKEN), methods=['POST'])
+# def getMessage():
+#     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+#     return "!", 200
+#
+# @server.route("/")
+# def webhook():
+#     bot.remove_webhook()
+#     bot.set_webhook(url='https://young-temple-04015.herokuapp.com/' + TELEGRAM_TOKEN)
+#     return "!", 200
+#
+# if __name__ == "__main__":
+#     server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
