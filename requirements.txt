@@ -31,6 +31,6 @@ sgmllib3k==1.0.0
 six==1.14.0
 telegram==0.0.1
 tornado==6.0.3
-urllib3==1.25.8
+urllib3==1.26.5
 Werkzeug==1.0.0
 zope.interface==4.7.1
